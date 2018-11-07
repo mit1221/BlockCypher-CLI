@@ -1,0 +1,23 @@
+{
+  "name": "coding-challenge",
+  "version": "1.0.0",
+  "description": "Interacting with Blockcypher's API",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mit1221/Coding-Challenge.git"
+  },
+  "author": "Mit Kapadia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mit1221/Coding-Challenge/issues"
+  },
+  "homepage": "https://github.com/mit1221/Coding-Challenge#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "request": "^2.88.0"
+  }
+}
