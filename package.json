@@ -17,8 +17,9 @@
   },
   "homepage": "https://github.com/mit1221/Coding-Challenge#readme",
   "dependencies": {
+    "commander": "^2.19.0",
     "express": "^4.16.4",
-    "prompt": "^1.0.0",
+    "inquirer": "^6.2.0",
     "request": "^2.88.0"
   }
 }

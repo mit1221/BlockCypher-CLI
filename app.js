@@ -1,16 +1,29 @@
-// import required modules
-const request = require('request');
-var prompt = require('prompt');
-
-// get testnet address from the user and make a request to blockcypher's API
-prompt.start();
-prompt.get(['address'], function (err, result) {
-  request('https://api.blockcypher.com/v1/btc/test3/addrs/' + result.address + '/balance', {
+/**
+ * Get the balance of a bitcoin testnet.
+ * @param {string} address - Address of the testnet.
+ */
+const getBalance = (address) => {
+  request('https://api.blockcypher.com/v1/btc/test3/addrs/' + address + '/balance', {
     json: true
   }, (err, res, body) => {
     if (err) {
       return console.log(err);
     }
-    console.log("The current balance in the testnet address " + result.address + " is: " + body.balance);
-  });
-});
+    console.log("The current balance in the testnet address " + address + " is: " + body.balance);
+  }); 
+}
+
+/**
+ * Make a payment from one bitcoin testnet to another.
+ * @param {string} fromAddress - Address to transfer from
+ * @param {string} toAddress - Address to transfer to
+ */
+const makePayment = (fromAddress, toAddress) => {
+  
+}
+
+// Export all methods
+module.exports = {
+  getBalance, 
+  makePayment
+};

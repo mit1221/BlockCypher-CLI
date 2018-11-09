@@ -1,7 +1,10 @@
 # Coding-Challenge
 Use Blockcypher's API to return the balance of a specific bitcoin testnet address and make a payment using testnet bitcoins
 
-URL to clone this repo: https://github.com/mit1221/Coding-Challenge.git
+1. Clone this repository:
 
-1. Run `npm install` to install all dependencies.
+```bash
+git clone https://github.com/mit1221/Coding-Challenge.git
+npm install
+```
 2. Run `node app` to run the program.
