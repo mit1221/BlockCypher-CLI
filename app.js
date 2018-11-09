@@ -1,3 +1,6 @@
+// import required modules
+const request = require('request');
+
 /**
  * Get the balance of a bitcoin testnet.
  * @param {string} address - Address of the testnet.
@@ -9,7 +12,7 @@ const getBalance = (address) => {
     if (err) {
       return console.log(err);
     }
-    console.log("The current balance in the testnet address " + address + " is: " + body.balance);
+    console.log("The current balance in the testnet address " + address + " is: " + body.balance / Math.pow(10, 8) + " BTC");
   }); 
 }
 
