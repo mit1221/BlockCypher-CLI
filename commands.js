@@ -39,7 +39,7 @@ program
 // Make payment command
 program
   .command('makepayment')
-  .alias('p')
+  .alias('m')
   .description('Make a payment from one address to another')
   .action(() => {
     prompt(askPaymentInfo).then(answers => makePayment(answers.fromAddress, answers.toAddress, answers.amount));

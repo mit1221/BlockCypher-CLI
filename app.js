@@ -24,7 +24,7 @@ const satoshiToBTC = amount => {
   return amount / Math.pow(10, 8);
 }
 
-const BTCToSatoshi = amount => {
+const BTCToSatoshi = amount => {  
   return amount * Math.pow(10, 8);
 }
 
@@ -34,15 +34,15 @@ const BTCToSatoshi = amount => {
  * @param {string} toAddress - Public address of the testnet to transfer to
  * @param {number} amount - The amount in BTC to transfer
  */
-const makePayment = (fromAddress, toAddress, amount) => {
-  const amountInSatoshi = BTCToSatoshi(parseInt(amount, 10));
+const makePayment = (fromAddress, toAddress, amount) => {  
+  const amountInSatoshi = BTCToSatoshi(parseFloat(amount, 10));
   
   var newtx = {
     inputs: [{ addresses: [ fromAddress ] }], 
     outputs: [{ addresses: [ toAddress ], value: amountInSatoshi}]
   };
 
-  var url = 'https://api.blockcypher.com/v1/bcy/test/txs/new';
+  var url = 'https://api.blockcypher.com/v1/btc/test3/txs/new';
 
   request({
     url: url, 
