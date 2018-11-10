@@ -27,10 +27,10 @@ $ challenge-cli --help
 
 Get the balance in the testnet at the given address:
 ```sh
-$ challenge-cli balance [ADDRESS]
+$ challenge-cli getbalance [ADDRESS]
 ```
 
 Make a payment from one address to another:
 ```sh
-$ challenge-cli pay
+$ challenge-cli makepayment
 ```
