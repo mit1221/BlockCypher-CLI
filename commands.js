@@ -4,6 +4,7 @@
 const program = require('commander');
 const { prompt } = require('inquirer');
 const {
+    generateAddress,
     getBalance, 
     makePayment
 } = require('./app');
@@ -27,10 +28,19 @@ const askPaymentInfo = [
     }
 ];
 
+// Generate new address command
+program
+  .command('generate')
+  .alias('g')
+  .description('Get the balance in the testnet at the given address')
+  .action(() => {
+    generateAddress();
+  });
+
 // Get balance command
 program
   .command('getbalance <address>')
-  .alias('b')
+  .alias('get')
   .description('Get the balance in the testnet at the given address')
   .action((address) => {
     getBalance(address);

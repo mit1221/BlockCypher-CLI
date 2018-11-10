@@ -19,10 +19,20 @@ Install dependencies:
 $ npm install
 ```
 
+### Create Symlink
+```sh
+$ npm link
+```
+
 ## Commands
 View all the commands:
 ```sh
 $ challenge-cli --help
+```
+
+Generate a new testnet adddress and associated private/public keys:
+```sh
+$ challenge-cli generate
 ```
 
 Get the balance in the testnet at the given address:
