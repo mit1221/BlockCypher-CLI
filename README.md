@@ -20,6 +20,11 @@ Install dependencies:
 $ npm install
 ```
 
+NOTE: Bitcore will not install correctly because of a problem in their package. To fix this, run:
+```sh
+$ npm install --ignore-scripts bitcore
+```
+
 ### Create Symlink
 ```sh
 $ npm link
