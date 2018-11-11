@@ -6,6 +6,7 @@ const bitcoin = require("bitcoinjs-lib");
 const bitcoinNetwork = bitcoin.networks.testnet;
 const bcypher = require('blockcypher');
 const { execSync } = require('child_process');
+var bitcore = require('bitcore');
 
 var bcapi = new bcypher('btc', 'test3', process.env.BLOCKCYPHER_KEY);
 
@@ -70,13 +71,17 @@ const BTCToSatoshi = amount => {
 /**
  * Make a payment from one bitcoin testnet to another.
  * @param {string} privateKey - Private key of the testnet to make payment from
- * @param {string} fromAddress - Public address of the testnet to make payment from
  * @param {string} toAddress - Public address of the testnet to make payment to
  * @param {number} amount - Payment amount (in BTC)
  */
-const makePayment = (privateKey, fromAddress, toAddress, amount) => {
+const makePayment = (privateKey, toAddress, amount) => {
   const keys = bitcoin.ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), bitcoinNetwork);
-    
+  const { pubkey } = bitcoin.payments.p2pkh({ pubkey: keys.publicKey }); // public key from private key
+
+  // get testnet address from public key
+  const publicKey = bitcore.PublicKey(pubkey);
+  const fromAddress = publicKey.toAddress(bitcore.Networks.testnet).toString();
+  
   // partially-filled TX object
   var newtx = {
     inputs: [{ addresses: [ fromAddress ] }], 
@@ -92,21 +97,21 @@ const makePayment = (privateKey, fromAddress, toAddress, amount) => {
       tmptx.pubkeys = [];
       tmptx.signatures = tmptx.tosign.map(function(tosign, n) {
         // adds the public key generated from the WIF to the tmptx object
-        const { pubkey } = bitcoin.payments.p2pkh({ pubkey: keys.publicKey });
         tmptx.pubkeys.push(pubkey.toString('hex'));
 
         // runs a binary executable to compute the signature from tosign and the private key
-        const signature = execSync(`./signer ${tosign} ${privateKey}`).toString();
-
+        let signature = execSync(`./signer ${tosign} ${privateKey}`).toString();
+        signature = signature.trim(); // remove newline character
+        
         return signature;
-      }); 
+      });      
       
       // send back the signed transaction
       bcapi.sendTX(tmptx, function(err, body) {
         if (err) {
           console.log(err);
         } else {
-          console.log(body);
+          console.log(body.tx.hash);
         }
       });
     }

@@ -20,6 +20,7 @@
   "homepage": "https://github.com/mit1221/Coding-Challenge#readme",
   "dependencies": {
     "bitcoinjs-lib": "^4.0.2",
+    "bitcore": "^4.1.1",
     "blockcypher": "^0.2.0",
     "child-process": "^1.0.2",
     "commander": "^2.19.0",

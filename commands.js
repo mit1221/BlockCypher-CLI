@@ -19,11 +19,6 @@ const askPaymentInfo = [
     },
     {
         type: 'input',
-        name: 'fromAddress',
-        message: 'Public bitcoin testnet address to make payment from:'
-    },
-    {
-        type: 'input',
         name: 'toAddress',
         message: 'Public bitcoin testnet address to make payment to:'
     },
@@ -67,7 +62,7 @@ program
   .alias('m')
   .description('Make a payment from one address to another')
   .action(() => {
-    prompt(askPaymentInfo).then(answers => makePayment(answers.privateKey, answers.fromAddress, answers.toAddress, parseFloat(answers.amount, 10)));
+    prompt(askPaymentInfo).then(answers => makePayment(answers.privateKey, answers.toAddress, parseFloat(answers.amount, 10)));
   });
 
 program.parse(process.argv);
