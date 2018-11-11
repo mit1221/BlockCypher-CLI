@@ -6,7 +6,7 @@ const bcypher = require('blockcypher');
 const { execSync } = require('child_process');
 const bitcore = require('bitcore');
 
-const bcapi = new bcypher('btc', 'test3', process.env.BLOCKCYPHER_KEY);
+const bcapi = new bcypher('btc', 'test3', process.env.BLOCKCYPHER_TOKEN);
 
 // helper functions
 const satoshiToBTC = amount => {

@@ -1,11 +1,12 @@
 # Coding-Challenge
-Use Blockcypher's API to return the balance of a specific bitcoin testnet address and make a payment using testnet bitcoins
+A CLI that interacts with Blockcypher's API to return the balance of a bitcoin testnet address, make a payment and more.
 
 ### Version
 1.0.0
 
 ### Requirements
 * Node.js
+* Blockcypher token (Get it free from [https://accounts.blockcypher.com/signup](https://accounts.blockcypher.com/signup))
 
 ### Setup and Installation
 Clone this repository:
@@ -24,38 +25,61 @@ $ npm install
 $ npm link
 ```
 
+### Create `.env` file
+For Unix-based Operating Systems:
+```sh
+$ touch .env
+```
+
+For Windows:
+```sh
+$ type nul > .env
+```
+
+### Add Blockcypher token (without the square brackets)
+```sh
+$ echo "BLOCKCYPHER_TOKEN='[YOUR_TOKEN]'" >> .env
+```
+
+If you have a private key for your bitcoin testnet, also add that to the `.env` file:
+```sh
+$ echo "PRIVATE_KEY='[YOUR_KEY]'" >> .env
+```
+
+Otherwise, you can generate a new testnet address using command 3 (below), which will give you a private key.
+
 ## Commands
-View all the commands:
+1. View all the commands:
 ```sh
 $ challenge-cli --help
 ```
 
-Convert between BTC and Satoshi:
+2. Convert between BTC and Satoshi:
 ```sh
 $ challenge-cli convert
 ```
 
-Generate a new testnet adddress and associated private/public keys:
+3. Generate a new testnet adddress and associated private/public keys:
 ```sh
 $ challenge-cli generate
 ```
 
-Adds funds to the given testnet adddress:
+4. Adds funds to the given testnet adddress:
 ```sh
 $ challenge-cli addfunds
 ```
 
-Send funds back to the faucet:
+5. Send funds back to the faucet:
 ```sh
 $ challenge-cli send
 ```
 
-Get the balance in the testnet at the given address:
+6. Get the balance in the testnet at the given address:
 ```sh
 $ challenge-cli getbalance [ADDRESS]
 ```
 
-Make a payment from one address to another:
+7. Make a payment from one address to another:
 ```sh
 $ challenge-cli makepayment
 ```
