@@ -35,6 +35,11 @@ Generate a new testnet adddress and associated private/public keys:
 $ challenge-cli generate
 ```
 
+Adds some funds to the given testnet adddress:
+```sh
+$ challenge-cli addfunds [ADDRESS]
+```
+
 Get the balance in the testnet at the given address:
 ```sh
 $ challenge-cli getbalance [ADDRESS]

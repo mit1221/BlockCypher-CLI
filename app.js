@@ -2,14 +2,16 @@
 require('dotenv').config();
 
 // import required modules
-const request = require('request');
-var bitcoin = require("bitcoinjs-lib");
-var bigi = require("bigi");
-var buffer = require('buffer');
-var bcypher = require('blockcypher');
+const bitcoin = require("bitcoinjs-lib");
+const bitcoinNetwork = bitcoin.networks.testnet;
+const bcypher = require('blockcypher');
+const { execSync } = require('child_process');
 
 var bcapi = new bcypher('btc', 'test3', process.env.BLOCKCYPHER_KEY);
 
+/**
+ * Generate a new testnet adddress and associated private/public keys.
+ */
 const generateAddress = () => {
   bcapi.genAddr(null, function(err, body) {
     if (err) {
@@ -24,9 +26,24 @@ const generateAddress = () => {
   });
 }
 
-// const hexEncoded = Buffer.from("93MKMva9MG5uy2JwN79QRBkNFcVGQX4frPJWsG5X74rvN58AzeB", 'base64').toString('hex');
-// var keys = new bitcoin.ECKey(bigi.fromHex(hexEncoded), true);
-// console.log(keys);
+/**
+ * Adds 10000 Satoshi to the given testnet adddress. 
+ * NOTE: Only works on Blockcypher testnet.
+ * @param {string} address - Address of the testnet.
+ */
+const addFunds = address => {
+  bcapi.faucet(address, 10000, function(err, body) {
+    if (err) {
+      console.log(err);
+    } else {
+      if (body.tx_ref != null) {
+        console.log("Added some Satoshi to your address!");
+      } else {
+        console.log(body);
+      }
+    }
+  });
+}
 
 /**
  * Get the balance of a bitcoin testnet.
@@ -52,33 +69,46 @@ const BTCToSatoshi = amount => {
 
 /**
  * Make a payment from one bitcoin testnet to another.
- * @param {string} fromAddress - Public address of the testnet to transfer from
- * @param {string} toAddress - Public address of the testnet to transfer to
- * @param {number} amount - The amount in BTC to transfer
+ * @param {string} privateKey - Private key of the testnet to make payment from
+ * @param {string} fromAddress - Public address of the testnet to make payment from
+ * @param {string} toAddress - Public address of the testnet to make payment to
+ * @param {number} amount - Payment amount (in BTC)
  */
-const makePayment = (fromAddress, toAddress, amount) => {
-  const hexEncoded = Buffer.from("93MKMva9MG5uy2JwN79QRBkNFcVGQX4frPJWsG5X74rvN58AzeB", 'base64').toString('hex');
-  var keys = new bitcoin.ECPair(bigi.fromHex(hexEncoded));
-  
-  const amountInSatoshi = BTCToSatoshi(parseFloat(amount, 10));
-  
+const makePayment = (privateKey, fromAddress, toAddress, amount) => {
+  const keys = bitcoin.ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), bitcoinNetwork);
+    
   // partially-filled TX object
   var newtx = {
     inputs: [{ addresses: [ fromAddress ] }], 
-    outputs: [{ addresses: [ toAddress ], value: amountInSatoshi}]
+    outputs: [{ addresses: [ toAddress ], value: BTCToSatoshi(amount)}]
   };
-
-  request({
-    url: 'https://api.blockcypher.com/v1/btc/test3/txs/new', 
-    method: 'POST',
-    json: true,
-    body: newtx
-  }, function(err, res, body) {
+  
+  // make a new transaction
+  bcapi.newTX(newtx, function(err, tmptx) {    
     if (err) {
       console.log(err);
     } else {
-      // body is a TXSkeleton object
-      console.log(body);
+      // signing each of the hex-encoded string required to finalize the transaction
+      tmptx.pubkeys = [];
+      tmptx.signatures = tmptx.tosign.map(function(tosign, n) {
+        // adds the public key generated from the WIF to the tmptx object
+        const { pubkey } = bitcoin.payments.p2pkh({ pubkey: keys.publicKey });
+        tmptx.pubkeys.push(pubkey.toString('hex'));
+
+        // runs a binary executable to compute the signature from tosign and the private key
+        const signature = execSync(`./signer ${tosign} ${privateKey}`).toString();
+
+        return signature;
+      }); 
+      
+      // send back the signed transaction
+      bcapi.sendTX(tmptx, function(err, body) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(body);
+        }
+      });
     }
   });
 }
@@ -86,6 +116,7 @@ const makePayment = (fromAddress, toAddress, amount) => {
 // Export all methods
 module.exports = {
   generateAddress,
+  addFunds,
   getBalance, 
   makePayment
 };

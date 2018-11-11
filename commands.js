@@ -5,12 +5,18 @@ const program = require('commander');
 const { prompt } = require('inquirer');
 const {
     generateAddress,
+    addFunds,
     getBalance, 
     makePayment
 } = require('./app');
 
 // Get address prompt
 const askPaymentInfo = [
+    {
+        type: 'input',
+        name: 'privateKey',
+        message: 'Private key of the testnet to make payment from:'
+    },
     {
         type: 'input',
         name: 'fromAddress',
@@ -32,9 +38,18 @@ const askPaymentInfo = [
 program
   .command('generate')
   .alias('g')
-  .description('Get the balance in the testnet at the given address')
+  .description('Generate a new testnet adddress and associated private/public keys')
   .action(() => {
     generateAddress();
+  });
+
+// Funds an address command
+program
+  .command('addfunds <address>')
+  .alias('a')
+  .description('Adds some funds to the given testnet adddress')
+  .action((adddress) => {
+    addFunds(adddress);
   });
 
 // Get balance command
@@ -52,7 +67,7 @@ program
   .alias('m')
   .description('Make a payment from one address to another')
   .action(() => {
-    prompt(askPaymentInfo).then(answers => makePayment(answers.fromAddress, answers.toAddress, answers.amount));
+    prompt(askPaymentInfo).then(answers => makePayment(answers.privateKey, answers.fromAddress, answers.toAddress, parseFloat(answers.amount, 10)));
   });
 
 program.parse(process.argv);
