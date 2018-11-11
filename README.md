@@ -30,14 +30,24 @@ View all the commands:
 $ challenge-cli --help
 ```
 
+Convert between BTC and Satoshi:
+```sh
+$ challenge-cli convert
+```
+
 Generate a new testnet adddress and associated private/public keys:
 ```sh
 $ challenge-cli generate
 ```
 
-Adds some funds to the given testnet adddress:
+Adds funds to the given testnet adddress:
 ```sh
-$ challenge-cli addfunds [ADDRESS]
+$ challenge-cli addfunds
+```
+
+Send funds back to the faucet:
+```sh
+$ challenge-cli send
 ```
 
 Get the balance in the testnet at the given address:
