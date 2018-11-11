@@ -2,13 +2,11 @@
 require('dotenv').config();
 
 // import required modules
-const bitcoin = require("bitcoinjs-lib");
-const bitcoinNetwork = bitcoin.networks.testnet;
 const bcypher = require('blockcypher');
 const { execSync } = require('child_process');
-var bitcore = require('bitcore');
+const bitcore = require('bitcore');
 
-var bcapi = new bcypher('btc', 'test3', process.env.BLOCKCYPHER_KEY);
+const bcapi = new bcypher('btc', 'test3', process.env.BLOCKCYPHER_KEY);
 
 /**
  * Generate a new testnet adddress and associated private/public keys.
@@ -64,8 +62,8 @@ const satoshiToBTC = amount => {
   return amount / Math.pow(10, 8);
 }
 
-const BTCToSatoshi = amount => {  
-  return amount * Math.pow(10, 8);
+const BTCToSatoshi = amount => {
+  return Math.round(amount * Math.pow(10, 8)); // round to avoid floating-point arithmetic errors    
 }
 
 /**
@@ -75,13 +73,11 @@ const BTCToSatoshi = amount => {
  * @param {number} amount - Payment amount (in BTC)
  */
 const makePayment = (privateKey, toAddress, amount) => {
-  const keys = bitcoin.ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), bitcoinNetwork);
-  const { pubkey } = bitcoin.payments.p2pkh({ pubkey: keys.publicKey }); // public key from private key
-
-  // get testnet address from public key
-  const publicKey = bitcore.PublicKey(pubkey);
+  // generate public key and address from private key
+  const privKey = new bitcore.PrivateKey(privateKey);
+  const publicKey = privKey.toPublicKey();
   const fromAddress = publicKey.toAddress(bitcore.Networks.testnet).toString();
-  
+    
   // partially-filled TX object
   var newtx = {
     inputs: [{ addresses: [ fromAddress ] }], 
@@ -96,8 +92,7 @@ const makePayment = (privateKey, toAddress, amount) => {
       // signing each of the hex-encoded string required to finalize the transaction
       tmptx.pubkeys = [];
       tmptx.signatures = tmptx.tosign.map(function(tosign, n) {
-        // adds the public key generated from the WIF to the tmptx object
-        tmptx.pubkeys.push(pubkey.toString('hex'));
+        tmptx.pubkeys.push(publicKey.toString());
 
         // runs a binary executable to compute the signature from tosign and the private key
         let signature = execSync(`./signer ${tosign} ${privateKey}`).toString();
