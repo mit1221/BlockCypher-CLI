@@ -8,6 +8,14 @@ const bitcore = require('bitcore');
 
 const bcapi = new bcypher('btc', 'test3', process.env.BLOCKCYPHER_KEY);
 
+// helper functions
+const satoshiToBTC = amount => {
+  return amount / Math.pow(10, 8);
+}
+const BTCToSatoshi = amount => {
+  return Math.round(amount * Math.pow(10, 8)); // round to avoid floating-point arithmetic errors    
+}
+
 /**
  * Generate a new testnet adddress and associated private/public keys.
  */
@@ -26,22 +34,12 @@ const generateAddress = () => {
 }
 
 /**
- * Adds 10000 Satoshi to the given testnet adddress. 
- * NOTE: Only works on Blockcypher testnet.
+ * Adds 10000 Satoshi (0.0001 BTC) to the given testnet adddress.
+ *
  * @param {string} address - Address of the testnet.
  */
 const addFunds = address => {
-  bcapi.faucet(address, 10000, function(err, body) {
-    if (err) {
-      console.log(err);
-    } else {
-      if (body.tx_ref != null) {
-        console.log("Added some Satoshi to your address!");
-      } else {
-        console.log(body);
-      }
-    }
-  });
+  makePayment(process.env.PRIVATE_KEY, address, 0.0001);
 }
 
 /**
@@ -52,18 +50,13 @@ const getBalance = address => {
   bcapi.getAddrBal(address, null, function(err, body) {
     if (err) {
       console.log(err);
-    } else {
-      console.log(`The current balance in the testnet address ${address} is: ${satoshiToBTC(body.balance)} BTC`);
+    } else {      
+      console.log(`The current balance in the testnet address ${address} is: ${satoshiToBTC(body.balance)} BTC.`);
+      if (body.unconfirmed_balance != 0) {
+        console.log(`Unconfirmed: ${satoshiToBTC(body.unconfirmed_balance)} BTC`);
+      }
     }
   });
-}
-
-const satoshiToBTC = amount => {
-  return amount / Math.pow(10, 8);
-}
-
-const BTCToSatoshi = amount => {
-  return Math.round(amount * Math.pow(10, 8)); // round to avoid floating-point arithmetic errors    
 }
 
 /**
@@ -85,7 +78,7 @@ const makePayment = (privateKey, toAddress, amount) => {
   };
   
   // make a new transaction
-  bcapi.newTX(newtx, function(err, tmptx) {    
+  bcapi.newTX(newtx, function(err, tmptx) {
     if (err) {
       console.log(err);
     } else {
@@ -106,7 +99,7 @@ const makePayment = (privateKey, toAddress, amount) => {
         if (err) {
           console.log(err);
         } else {
-          console.log(body.tx.hash);
+          console.log(`Transaction hash: ${body.tx.hash}`);
         }
       });
     }
