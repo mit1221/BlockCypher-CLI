@@ -46,7 +46,7 @@ $ type nul > .env
 $ echo "BLOCKCYPHER_TOKEN='[YOUR_TOKEN]'" >> .env
 ```
 
-If you have a private key for your bitcoin testnet, also add that to the `.env` file:
+If you have the private key for your bitcoin testnet, also add that to the `.env` file:
 ```sh
 $ echo "PRIVATE_KEY='[YOUR_KEY]'" >> .env
 ```
@@ -69,10 +69,11 @@ $ challenge-cli convert
 $ challenge-cli generate
 ```
 
-4. Adds funds to the given testnet adddress:
+4. Adds funds to the given testnet adddress from the faucet:
 ```sh
 $ challenge-cli addfunds
 ```
+Note: This will only work if there are funds present in the testnet corresponding to the private key specified in the .env file.
 
 5. Send funds back to the faucet:
 ```sh
